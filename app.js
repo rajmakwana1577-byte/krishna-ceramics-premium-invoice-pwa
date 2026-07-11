@@ -1,22 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Krishna Ceramics Premium GST Invoice Generator PWA
+ * CORE ENGINE - app.js (Production Ready)
+ */
 
-    // ==========================================
-    // 1. DATA MASTER DATASETS
-    // ==========================================
-    
-
-==========================================================
-// GOOGLE SHEETS LIVE DATA MASTERS CONNECTION CONFIGURATION (FINAL LIVE)
 // ==========================================================
-const GOOGLE_SHEET_ID = "1b6igO7kzK-WsP3p0-KFePSZ9CAalll15vFcgZkC6RpM";
+// 1. GLOBAL STATE & GOOGLE SHEETS REGISTRY CONFIGURATION
+// ==========================================================
+const GOOGLE_SHEET_ID = "1b6igO7kzK-WsP3p0-KFePSZ9CAalll15vFcgZkC6RpM"; 
 
 let PARTY_MASTER = [];
 let PRODUCT_MASTER = [];
 let TRANSPORT_MASTER = [];
 
+const SOURCE_STATE_CODE = 24; // Base Operations: Gujarat (Krishna Ceramics)
+
 /**
  * Robust RFC 4180 Compliant CSV Parser State-Machine
- * Handles embedded commas, double quotes, and multiline text inside cell records flawlessly.
+ * Flawlessly processes embedded commas, double quotes, and multiline text blocks.
  */
 function parseCSVToJSON(csvText) {
     const rawLines = [];
@@ -93,97 +93,16 @@ function parseCSVToJSON(csvText) {
     return results;
 }
 
-// Real-Time Google Sheet Parallel Fetching Engine (Promise.all)
-async function fetchMasterDataFromSheets() {
-    try {
-        console.log("Fintech Core: Initializing Parallel Connection to Google Sheet Ledger...");
-        
-        const partyUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Party_Master`;
-        const productUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Product_Master`;
-        const transportUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Transport_Master`;
-
-        // Parallel download execution
-        const [partyRes, productRes, transportRes] = await Promise.all([
-            fetch(partyUrl),
-            fetch(productUrl),
-            fetch(transportUrl)
-        ]);
-
-        // Extract text streams simultaneously
-        const [partyCsv, productCsv, transportCsv] = await Promise.all([
-            partyRes.text(),
-            productRes.text(),
-            transportRes.text()
-        ]);
-
-        // Process and map Party Master
-        const parsedParties = parseCSVToJSON(partyCsv);
-        PARTY_MASTER = parsedParties.map(p => {
-            let rawCode = 24; 
-            if (p['GSTIN'] && p['GSTIN'].length >= 2) {
-                rawCode = parseInt(p['GSTIN'].substring(0, 2)) || 24;
-            }
-            return {
-                id: p['Party ID'] || Math.random().toString(),
-                name: p['Party Name'] || 'Unknown Party',
-                gstin: p['GSTIN'] || '',
-                state: p['State'] || 'Gujarat',
-                stateCode: rawCode
-            };
-        }).filter(p => p.name !== 'Unknown Party');
-
-        // Process and map Product Master
-        const parsedProducts = parseCSVToJSON(productCsv);
-        PRODUCT_MASTER = parsedProducts.map(p => {
-            return {
-                id: p['Product ID'] || Math.random().toString(),
-                name: p['Product Name'] || 'Unknown Product',
-                hsn: p['HSN Code'] || '6907',
-                size: p['Size'] || 'Universal',
-                unit: 'Boxes', 
-                gstRate: 18,    // 100% FIXED GST AT 18% AS PER CONFIRMED RULES
-                price: 0.00     // Rate input remains 100% manual
-            };
-        }).filter(p => p.name !== 'Unknown Product');
-
-        // Process and map Transport Master
-        const parsedTransport = parseCSVToJSON(transportCsv);
-        TRANSPORT_MASTER = parsedTransport.map(t => {
-            return {
-                id: t['Transport ID'] || Math.random().toString(),
-                name: t['Transport Name'] || 'Unknown Carrier',
-                defaultVehicle: t['Vehicle No.'] || ''
-            };
-        }).filter(t => t.name !== 'Unknown Carrier');
-
-        console.log(`Fintech Core Sync Completed: ${PARTY_MASTER.length} Parties, ${PRODUCT_MASTER.length} Products, ${TRANSPORT_MASTER.length} Transporters loaded in parallel.`);
-        
-        // Refresh structural dropdown nodes safely
-        if (typeof loadDropdownMasters === 'function') {
-            loadDropdownMasters();
-        }
-    } catch (error) {
-        console.error("Critical Google Sheets Parallel Data Sync Failure:", error);
-    }
-}
-
-// Initialize sheet sync immediately when the viewport context is ready
+// ==========================================================
+// 2. CORE DOM APPLICATION ORCHESTRATION ENGINE
+// ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
-    fetchMasterDataFromSheets();
-});
-
-const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
-
-// End Marker
-
-
-
-
-    // ==========================================
-    // 2. DOM ELEMENT REGISTRY
-    // ==========================================
+    
+    // Capture View DOM Targets
     const viewHome = document.getElementById('view-home');
     const viewInvoicePanel = document.getElementById('view-invoice-panel');
+    
+    // Capture Action Trigger Controls
     const initiateInvoiceBtn = document.getElementById('btn-initiate-invoice');
     const backToHomeBtn = document.getElementById('btn-back-to-home');
     
@@ -197,6 +116,7 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
     const productRowsContainer = document.getElementById('product-rows-container');
     const appendRowBtn = document.getElementById('btn-append-row');
 
+    // Capture Valuation Output Fields
     const valTaxable = document.getElementById('val-taxable');
     const valCgst = document.getElementById('val-cgst');
     const valSgst = document.getElementById('val-sgst');
@@ -211,30 +131,90 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
     
     const btnGeneratePdfUi = document.getElementById('btn-generate-pdf-ui');
 
-    // ==========================================
-    // 3. NAVIGATION & ICON SETUP
-    // ==========================================
+    // Initialize Structural Component Icons via Lucide Engine
     function syncLucideIcons() {
-        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
-    if (initiateInvoiceBtn) {
-        initiateInvoiceBtn.addEventListener('click', () => {
-            viewHome.classList.remove('active');
-            viewInvoicePanel.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            initiateInvoiceDefaults();
-        });
+    // ==========================================
+    // 3. REMOTE GOOGLE SHEET INGESTION SUBMODULE
+    // ==========================================
+    async function fetchMasterDataFromSheets() {
+        try {
+            console.log("Fintech Core: Initializing Parallel Ingestion from Google Sheets...");
+            
+            const partyUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Party_Master`;
+            const productUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Product_Master`;
+            const transportUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Transport_Master`;
+
+            // Parallel execution via Promise.all() API
+            const [partyRes, productRes, transportRes] = await Promise.all([
+                fetch(partyUrl),
+                fetch(productUrl),
+                fetch(transportUrl)
+            ]);
+
+            const [partyCsv, productCsv, transportCsv] = await Promise.all([
+                partyRes.text(),
+                productRes.text(),
+                transportRes.text()
+            ]);
+
+            // Map Remotely Fetched Parties
+            const parsedParties = parseCSVToJSON(partyCsv);
+            PARTY_MASTER = parsedParties.map(p => {
+                let rawCode = 24; 
+                if (p['GSTIN'] && p['GSTIN'].length >= 2) {
+                    rawCode = parseInt(p['GSTIN'].substring(0, 2)) || 24;
+                }
+                return {
+                    id: p['Party ID'] || Math.random().toString(),
+                    name: p['Party Name'] || 'Unknown Party',
+                    gstin: p['GSTIN'] || '',
+                    state: p['State'] || 'Gujarat',
+                    stateCode: rawCode
+                };
+            }).filter(p => p.name !== 'Unknown Party');
+
+            // Map Remotely Fetched Products (Fixed GST 18%, Manual Price Setup)
+            const parsedProducts = parseCSVToJSON(productCsv);
+            PRODUCT_MASTER = parsedProducts.map(p => {
+                return {
+                    id: p['Product ID'] || Math.random().toString(),
+                    name: p['Product Name'] || 'Unknown Product',
+                    hsn: p['HSN Code'] || '6907',
+                    size: p['Size'] || 'Universal',
+                    unit: 'Boxes', 
+                    gstRate: 18,    
+                    price: 0.00     
+                };
+            }).filter(p => p.name !== 'Unknown Product');
+
+            // Map Remotely Fetched Transports
+            const parsedTransport = parseCSVToJSON(transportCsv);
+            TRANSPORT_MASTER = parsedTransport.map(t => {
+                return {
+                    id: t['Transport ID'] || Math.random().toString(),
+                    name: t['Transport Name'] || 'Unknown Carrier',
+                    defaultVehicle: t['Vehicle No.'] || ''
+                };
+            }).filter(t => t.name !== 'Unknown Carrier');
+
+            console.log(`Fintech Core Sync Completed: ${PARTY_MASTER.length} Parties, ${PRODUCT_MASTER.length} Products, ${TRANSPORT_MASTER.length} Transporters populated.`);
+            
+            // Invoke Dropdown Population immediately post remote execution completion
+            loadDropdownMasters();
+
+        } catch (error) {
+            console.error("Critical Google Sheets Parallel Data Sync Failure:", error);
+        }
     }
 
-    if (backToHomeBtn) {
-        backToHomeBtn.addEventListener('click', () => {
-            viewInvoicePanel.classList.remove('active');
-            viewHome.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
+    // ==========================================
+    // 4. DROPDOWN INJECTION LOGIC
+    // ==========================================
     function loadDropdownMasters() {
         partySelect.innerHTML = '<option value="">Select Premium Business Client</option>';
         PARTY_MASTER.forEach(party => {
@@ -253,6 +233,7 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
         });
     }
 
+    // Auto-fill listeners mapping logic
     partySelect.addEventListener('change', (e) => {
         const selectedParty = PARTY_MASTER.find(p => p.id === e.target.value);
         if (selectedParty) {
@@ -277,7 +258,27 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
     });
 
     // ==========================================
-    // 4. COMPUTATION ENGINE
+    // 5. ROUTE VIEW TRANSITIONS
+    // ==========================================
+    if (initiateInvoiceBtn) {
+        initiateInvoiceBtn.addEventListener('click', () => {
+            viewHome.classList.remove('active');
+            viewInvoicePanel.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            initiateInvoiceDefaults();
+        });
+    }
+
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', () => {
+            viewInvoicePanel.classList.remove('active');
+            viewHome.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ==========================================
+    // 6. INVOICE COMPUTATION DYNAMICS ENGINE
     // ==========================================
     function initiateInvoiceDefaults() {
         productRowsContainer.innerHTML = '';
@@ -367,14 +368,12 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
                 rowElement.querySelector('.row-unit').value = prd.unit;
                 rowElement.querySelector('.row-gst').value = `${prd.gstRate}%`;
                 rowElement.querySelector('.row-gst').dataset.rate = prd.gstRate;
-                rateInput.value = prd.price.toFixed(2);
             } else {
                 rowElement.querySelector('.row-hsn').value = '';
                 rowElement.querySelector('.row-size').value = '';
                 rowElement.querySelector('.row-unit').value = '';
                 rowElement.querySelector('.row-gst').value = '';
                 rowElement.querySelector('.row-gst').dataset.rate = 0;
-                rateInput.value = '0.00';
             }
             calculateSingleRowOutput(rowElement);
         });
@@ -463,6 +462,9 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
         valWords.textContent = transformNumberToWords(mathematicallyRoundedTotal);
     }
 
+    // ==========================================
+    // 7. NUMERIC TO ALPHABETIC CONVERSION (WORDS)
+    // ==========================================
     function transformNumberToWords(num) {
         if (num === 0) return "INR Zero Only";
         const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
@@ -470,46 +472,4 @@ const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
         
         function convertHundreds(n) {
             let str = "";
-            if (n > 99) { str += a[Math.floor(n / 100)] + "Hundred "; n %= 100; }
-            if (n > 19) { str += b[Math.floor(n / 10)] + " " + a[n % 10]; } 
-            else if (n > 0) { str += a[n]; }
-            return str;
-        }
-
-        let rem = num; let wordResult = "";
-        const crores = Math.floor(rem / 10000000); rem %= 10000000;
-        if (crores > 0) wordResult += convertHundreds(crores) + "Crore ";
-        const lakhs = Math.floor(rem / 100000); rem %= 100000;
-        if (lakhs > 0) wordResult += convertHundreds(lakhs) + "Lakh ";
-        const thousands = Math.floor(rem / 1000); rem %= 1000;
-        if (thousands > 0) wordResult += convertHundreds(thousands) + "Thousand ";
-        if (rem > 0) wordResult += convertHundreds(rem);
-        return "INR " + wordResult.trim() + " Only";
-    }
-
-    // ==========================================
-// 5. PREMIUM PRINT ENGINE (PDF GENERATOR)
-// ==========================================
-if (btnGeneratePdfUi) {
-    btnGeneratePdfUi.addEventListener('click', () => {
-
-        // Validate Customer Party
-        if (!partySelect.value) {
-            alert("Validation Exception: Please select a Customer Party before generating the PDF.");
-            return;
-        }
-
-        // Launch Premium PDF Engine
-        if (typeof window.generatePremiumInvoicePDF === 'function') {
-            window.generatePremiumInvoicePDF();
-        } else {
-            console.error("PDF Engine Module missing or failed to initialize.");
-            alert("PDF Engine could not be loaded.");
-        }
-
-    });
-}
-
-    if (appendRowBtn) { appendRowBtn.addEventListener('click', spawnProductRowSlot); }
-    fetchMasterDataFromSheets();
-});
+            if (n > 99) { str += a[Math.floor(n / 100)] + "Hu
