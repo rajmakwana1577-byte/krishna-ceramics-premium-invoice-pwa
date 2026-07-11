@@ -2,126 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Krishna Ceramics — Luxury Invoice Terminal</title>
-    <!-- Premium Google Fonts & Lucide Icons -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Krishna Ceramics — GST Invoice Terminal</title>
+    
+    <!-- PWA & Mobile Optimization -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#040814">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Design DNA Fonts & System Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Ambient Premium Mesh Background -->
-    <div class="ambient-glow orb-gold"></div>
-    <div class="ambient-glow orb-blue"></div>
+    <!-- Premium Fintech Ambient Rays -->
+    <div class="glow-emitter emitter-top-right"></div>
+    <div class="glow-emitter emitter-bottom-left"></div>
 
-    <div class="app-viewport">
+    <div class="terminal-shell">
         
-        <!-- Premium Header -->
-        <header class="premium-header">
-            <div class="brand-wrapper">
-                <div class="luxury-logo">
-                    <span class="logo-mark">K</span>
+        <!-- Premium Commercial Store Header -->
+        <header class="terminal-header">
+            <div class="store-brand-block">
+                <div class="prime-logo-container">
+                    <span class="logo-glyph">K</span>
                 </div>
-                <div class="brand-meta">
+                <div class="brand-credentials">
                     <h1>Krishna Ceramics</h1>
-                    <span class="gold-tagline">Architectural Surfaces Panel</span>
+                    <div class="gstin-badge">
+                        <span class="gstin-label">GSTIN</span>
+                        <span class="gstin-number">24AAAAA0000A1Z5</span>
+                    </div>
                 </div>
             </div>
-            <div class="terminal-status">
-                <span class="status-indicator"></span>
-                <span class="status-text">Terminal Active</span>
+            
+            <div class="live-status-pill">
+                <span class="pulse-dot"></span>
+                <span class="status-lbl">Offline Ready</span>
             </div>
         </header>
 
-        <!-- Main Workspace -->
-        <main class="main-content">
+        <!-- Main Invoice Execution Workspace -->
+        <main class="terminal-workspace">
             
-            <!-- Welcome Section -->
-            <section class="welcome-section">
-                <div class="premium-badge"><i data-lucide="sparkles"></i> Executive Billing Suite</div>
-                <h2>Elite Invoice Engine</h2>
-                <p>Deploy pristine, GST-compliant digital dynamic layouts for high-end slabs, quartz, and premium porcelain collections instantly.</p>
-            </section>
-
-            <!-- Massive Action Terminal Trigger -->
-            <div class="action-terminal">
-                <button type="button" class="btn-mega-trigger" id="action-create-invoice">
-                    <span class="btn-shimmer"></span>
-                    <div class="btn-content">
-                        <div class="btn-icon-box">
-                            <i data-lucide="file-plus-2"></i>
+            <!-- Core Primary Action Terminal -->
+            <div class="main-action-zone">
+                <button type="button" class="action-megabutton" id="btn-initiate-invoice">
+                    <span class="button-shimmer-track"></span>
+                    <div class="action-inner-content">
+                        <div class="action-icon-frame">
+                            <i data-lucide="file-spreadsheet"></i>
                         </div>
-                        <div class="btn-text-wrapper">
-                            <span class="btn-title">Create New Invoice</span>
-                            <span class="btn-subtitle">Initialize dynamic itemized GST layout</span>
+                        <div class="action-text-frame">
+                            <span class="action-title">Create GST Invoice</span>
+                            <span class="action-meta">Initialize itemized billing sequence</span>
                         </div>
                     </div>
-                    <i data-lucide="chevron-right" class="arrow-trigger"></i>
+                    <div class="arrow-indicator-frame">
+                        <i data-lucide="arrow-up-right"></i>
+                    </div>
                 </button>
             </div>
 
-            <!-- Features Architecture Grid -->
-            <section class="features-grid">
+            <!-- Crisp Core Utility Grid -->
+            <div class="utility-feature-grid">
                 
                 <!-- Card 1: Mobile First -->
-                <div class="glass-feature-card">
-                    <div class="card-icon"><i data-lucide="smartphone"></i></div>
+                <div class="fintech-card">
+                    <div class="card-icon-hdr"><i data-lucide="smartphone"></i></div>
                     <h3>Mobile First</h3>
-                    <p>Designed natively for touch interfaces, providing absolute responsiveness across mobile devices and tablets.</p>
+                    <p>Optimized touch layouts for swift viewport execution.</p>
                 </div>
 
-                <!-- Card 2: Offline Ready -->
-                <div class="glass-feature-card">
-                    <div class="card-icon"><i data-lucide="wifi-off"></i></div>
-                    <h3>Offline Ready</h3>
-                    <p>Engineered to boot and function entirely without service drops, ensuring continuous retail execution.</p>
+                <!-- Card 2: GST Ready -->
+                <div class="fintech-card">
+                    <div class="card-icon-hdr"><i data-lucide="percent"></i></div>
+                    <h3>GST Ready</h3>
+                    <p>Compliant with standard CGST, SGST, and IGST tiers.</p>
                 </div>
 
-                <!-- Card 3: GST Invoice Generator -->
-                <div class="glass-feature-card">
-                    <div class="card-icon"><i data-lucide="scale"></i></div>
-                    <h3>GST Invoice Generator</h3>
-                    <p>Structured layout compliant with modern taxation protocols (CGST, SGST, IGST frameworks).</p>
+                <!-- Card 3: Offline -->
+                <div class="fintech-card">
+                    <div class="card-icon-hdr"><i data-lucide="wifi-off"></i></div>
+                    <h3>Offline</h3>
+                    <p>Local state resilience during active network dropouts.</p>
                 </div>
 
-                <!-- Card 4: PWA Ready -->
-                <div class="glass-feature-card">
-                    <div class="card-icon"><i data-lucide="zap"></i></div>
-                    <h3>PWA Ready</h3>
-                    <p>Installable directly onto home screens, offering high caching thresholds and standalone app execution.</p>
+                <!-- Card 4: Installable PWA -->
+                <div class="fintech-card">
+                    <div class="card-icon-hdr"><i data-lucide="layers"></i></div>
+                    <h3>Installable PWA</h3>
+                    <p>Launches standalone directly from device workspace.</p>
                 </div>
 
-            </section>
+            </div>
 
         </main>
 
-        <!-- Premium Design DNA Badge -->
-        <footer class="minimal-footer">
-            <p>&copy; 2026 Krishna Ceramics. All rights reserved.</p>
-            <div class="design-dna">
-                <span>Apple + Stripe + Notion Inspired UI</span>
-            </div>
+        <!-- Clean Institutional Footer -->
+        <footer class="terminal-footer">
+            <span class="copyright-str">&copy; 2026 Krishna Ceramics</span>
+            <div class="engine-version">v1.0.0-PRO</div>
         </footer>
 
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Icons
-            if (typeof lucide !== 'undefined') { lucide.createIcons(); }
-            
-            // Simple Navigation Route Hook
-            const triggerBtn = document.getElementById('action-create-invoice');
-            if(triggerBtn) {
-                triggerBtn.addEventListener('click', () => {
-                    console.log("Navigation Hook triggered: Load Premium Invoice Screen workspace.");
-                    // Next instruction will bind the physical transition logic here.
-                });
-            }
-        });
-    </script>
+    <!-- UI State Initialization Wire -->
+    <script src="app.js"></script>
 </body>
-</html>
+</html> 
