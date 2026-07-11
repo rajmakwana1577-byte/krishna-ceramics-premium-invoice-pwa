@@ -74,6 +74,24 @@ body {
     min-height: 100vh;
 }
 
+/* --- VIEW MANAGER MECHANICS --- */
+.terminal-view {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    animation: slideViewTransition 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.terminal-view.active {
+    display: flex;
+}
+
+@keyframes slideViewTransition {
+    from { opacity: 0; transform: translateY(12px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 /* --- PREMIUM COMMERCIAL HEADER --- */
 .terminal-header {
     display: flex;
@@ -361,9 +379,404 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* =================================================== */
+/* NEW LAYER: INVOICE CONFIGURATION VIEW CORE STYLING  */
+/* =================================================== */
+.terminal-sub-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--glass-border);
+    margin-bottom: 24px;
+}
+
+.btn-back-nav {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--glass-plate);
+    border: 1px solid var(--glass-border);
+    color: var(--color-text-pure);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-micro);
+}
+
+.btn-back-nav:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--glass-border-focus);
+}
+
+.btn-back-nav i {
+    width: 16px;
+    height: 16px;
+}
+
+.sub-header-title {
+    flex: 1;
+    margin-left: 14px;
+}
+
+.sub-header-title h2 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.invoice-meta-indicator {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    display: block;
+}
+
+.invoice-workspace-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 80px;
+}
+
+/* Premium Fintech Transactional Cards */
+.fintech-interactive-card {
+    background: var(--glass-plate);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-premium-card);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.card-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.8px;
+    border-left: 2px solid var(--color-fintech-blue);
+    padding-left: 8px;
+    line-height: 1;
+}
+
+.card-section-label.label-gold {
+    border-left-color: var(--color-gold-accent);
+}
+
+.form-dual-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.input-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-field-group label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select.select-field {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-premium-inner);
+    padding: 10px 14px;
+    color: var(--color-text-pure);
+    font-size: 13px;
+    width: 100%;
+    transition: var(--transition-micro);
+}
+
+input:focus, select.select-field:focus {
+    outline: none;
+    border-color: var(--color-fintech-blue);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.uppercase-text {
+    text-transform: uppercase;
+}
+.margin-top-sm {
+    margin-top: 4px;
+}
+
+/* Dynamic Line Item Slots Architecture */
+.items-ledger-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.ledger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.ledger-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-pure);
+}
+
+.btn-add-item-row {
+    background: transparent;
+    border: none;
+    color: var(--color-gold-accent);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-micro);
+}
+
+.btn-add-item-row:hover {
+    color: var(--color-gold-glow);
+}
+
+.btn-add-item-row i {
+    width: 14px;
+    height: 14px;
+}
+
+.item-slots-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-row-component {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-premium-card);
+    padding: 16px;
+    position: relative;
+    animation: itemRowSpawn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes itemRowSpawn {
+    from { opacity: 0; transform: scale(0.97) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.row-meta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--glass-border);
+    margin-bottom: 14px;
+}
+
+.row-count-badge {
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--color-text-muted);
+}
+
+.btn-remove-row-slot {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 2px;
+    transition: var(--transition-micro);
+}
+
+.btn-remove-row-slot:hover {
+    color: #ef4444;
+}
+
+.btn-remove-row-slot i {
+    width: 14px;
+    height: 14px;
+}
+
+.row-inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.grid-span-full {
+    grid-column: 1 / -1;
+}
+
+.grid-span-double-right {
+    grid-column: span 2;
+}
+
+.align-right-numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.text-center-aligned {
+    text-align: center;
+}
+
+.static-amount-output {
+    background: rgba(212, 175, 55, 0.04);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: var(--radius-premium-inner);
+    padding: 10px 14px;
+    color: var(--color-gold-accent);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* GST Summary Valuation List Layout */
+.summary-valuation-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.valuation-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.valuation-line .line-label {
+    color: var(--color-text-muted);
+}
+
+.valuation-line .line-value {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.tax-sub-line {
+    font-size: 12px;
+    padding-left: 10px;
+    border-left: 1px solid var(--glass-border);
+}
+
+.muted-line {
+    opacity: 0.35;
+}
+
+/* Grand Total Showcase Blueprint */
+.grand-total-showcase-box {
+    background: linear-gradient(135deg, #0d1a3a 0%, #050b1a 100%);
+    border: 1px solid var(--color-gold-accent);
+    border-radius: var(--radius-premium-card);
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 16px 36px rgba(212, 175, 55, 0.05);
+}
+
+.total-meta-lbl {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.total-monetary-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-gold-accent);
+    margin: 4px 0;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+}
+
+.amount-words-interpretation {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-style: italic;
+    line-height: 1.4;
+    border-top: 1px dashed rgba(255, 255, 255, 0.05);
+    padding-top: 8px;
+    margin-top: 6px;
+}
+
+/* Megabutton Large Execution Terminal */
+.terminal-action-stack {
+    margin-top: 8px;
+}
+
+.btn-primary-fintech-lg {
+    width: 100%;
+    position: relative;
+    background: linear-gradient(135deg, #1e40af 0%, #0b1e47 100%);
+    border: 1px solid var(--color-gold-accent);
+    border-radius: var(--radius-premium-card);
+    padding: 16px;
+    color: var(--color-text-pure);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 12px 28px -4px rgba(30, 64, 175, 0.4);
+    overflow: hidden;
+    transition: var(--transition-micro);
+}
+
+.btn-shimmer-track-lg {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
+    transform: skewX(-20deg);
+    transition: 0.7s;
+}
+
+.btn-primary-fintech-lg:hover .btn-shimmer-track-lg {
+    left: 140%;
+}
+
+.btn-primary-fintech-lg:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-gold-glow);
+    box-shadow: 0 16px 32px -4px rgba(212, 175, 55, 0.2);
+}
+
+.btn-primary-fintech-lg i {
+    width: 16px;
+    height: 16px;
+    color: var(--color-gold-accent);
+}
+
 /* --- SMALL DEVICE ADAPTATION --- */
 @media (max-width: 360px) {
-    .utility-feature-grid {
+    .utility-feature-grid, .form-dual-row {
         grid-template-columns: 1fr;
     }
-}
+    .row-inputs-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .grid-span-double-right {
+        grid-column: span 2;
+    }
+    }
