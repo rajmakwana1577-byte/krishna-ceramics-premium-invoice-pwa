@@ -31,7 +31,6 @@
         <!-- VIEW 1: HOME SCREEN TERMINAL                        -->
         <!-- =================================================== -->
         <div id="view-home" class="terminal-view active">
-            <!-- Premium Commercial Store Header -->
             <header class="terminal-header">
                 <div class="store-brand-block">
                     <div class="prime-logo-container">
@@ -52,7 +51,6 @@
                 </div>
             </header>
 
-            <!-- Main Invoice Execution Workspace -->
             <main class="terminal-workspace">
                 <div class="main-action-zone">
                     <button type="button" class="action-megabutton" id="btn-initiate-invoice">
@@ -72,26 +70,22 @@
                     </button>
                 </div>
 
-                <!-- Crisp Core Utility Grid -->
                 <div class="utility-feature-grid">
                     <div class="fintech-card">
                         <div class="card-icon-hdr"><i data-lucide="smartphone"></i></div>
                         <h3>Mobile First</h3>
                         <p>Optimized touch layouts for swift viewport execution.</p>
                     </div>
-
                     <div class="fintech-card">
                         <div class="card-icon-hdr"><i data-lucide="percent"></i></div>
                         <h3>GST Ready</h3>
                         <p>Compliant with standard CGST, SGST, and IGST tiers.</p>
                     </div>
-
                     <div class="fintech-card">
                         <div class="card-icon-hdr"><i data-lucide="wifi-off"></i></div>
                         <h3>Offline</h3>
                         <p>Local state resilience during active network dropouts.</p>
                     </div>
-
                     <div class="fintech-card">
                         <div class="card-icon-hdr"><i data-lucide="layers"></i></div>
                         <h3>Installable PWA</h3>
@@ -100,7 +94,6 @@
                 </div>
             </main>
 
-            <!-- Clean Institutional Footer -->
             <footer class="terminal-footer">
                 <span class="copyright-str">&copy; 2026 Krishna Ceramics</span>
                 <div class="engine-version">v1.0.0-PRO</div>
@@ -111,7 +104,6 @@
         <!-- VIEW 2: INVOICE CONFIGURATION TERMINAL              -->
         <!-- =================================================== -->
         <div id="view-invoice-panel" class="terminal-view">
-            <!-- Invoice Header & Navigation Controls -->
             <header class="terminal-sub-header">
                 <button type="button" class="btn-back-nav" id="btn-back-to-home">
                     <i data-lucide="arrow-left"></i>
@@ -126,10 +118,7 @@
                 </div>
             </header>
 
-            <!-- Invoice Generation Form Payload -->
             <main class="invoice-workspace-flow">
-                
-                <!-- Core Meta Card: Invoice Details -->
                 <div class="fintech-interactive-card">
                     <div class="card-section-label">Core Registry</div>
                     <div class="form-dual-row">
@@ -144,14 +133,11 @@
                     </div>
                 </div>
 
-                <!-- Party Selection Card -->
                 <div class="fintech-interactive-card">
                     <div class="card-section-label">Party Selection</div>
                     <div class="input-field-group">
                         <label>Customer Name / Dealer</label>
-                        <select class="select-field" id="party-select">
-                            <!-- Dynamic Load -->
-                        </select>
+                        <select class="select-field" id="party-select"></select>
                     </div>
                     <div class="input-field-group margin-top-sm">
                         <label>GSTIN Identifier</label>
@@ -163,14 +149,11 @@
                     </div>
                 </div>
 
-                <!-- Transport Selection Card -->
                 <div class="fintech-interactive-card">
                     <div class="card-section-label">Transport & Logistics</div>
                     <div class="input-field-group">
                         <label>Carrier Transport</label>
-                        <select class="select-field" id="transport-select">
-                            <!-- Dynamic Load -->
-                        </select>
+                        <select class="select-field" id="transport-select"></select>
                     </div>
                     <div class="input-field-group margin-top-sm">
                         <label>Vehicle Number</label>
@@ -178,7 +161,6 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Line Items Section -->
                 <div class="items-ledger-container">
                     <div class="ledger-header">
                         <span class="ledger-title">Dynamic Product Registry</span>
@@ -186,14 +168,9 @@
                             <i data-lucide="plus-circle"></i> Add Row
                         </button>
                     </div>
-
-                    <!-- Dynamic Container for Item Slots -->
-                    <div class="item-slots-stack" id="product-rows-container">
-                        <!-- Instantiated dynamically via app.js calculations engine -->
-                    </div>
+                    <div class="item-slots-stack" id="product-rows-container"></div>
                 </div>
 
-                <!-- GST Summary Valuation Card -->
                 <div class="fintech-interactive-card luxury-valuation-card">
                     <div class="card-section-label label-gold">GST Breakdown Architecture</div>
                     <div class="summary-valuation-lines">
@@ -220,29 +197,111 @@
                     </div>
                 </div>
 
-                <!-- Grand Total Sticky/Highlight Card -->
                 <div class="grand-total-showcase-box">
                     <div class="total-meta-lbl">Grand Total Payable</div>
                     <div class="total-monetary-val" id="val-grandtotal">₹0.00</div>
-                    <div class="amount-words-interpretation" id="val-words">
-                        INR Zero Only
-                    </div>
+                    <div class="amount-words-interpretation" id="val-words">INR Zero Only</div>
                 </div>
 
-                <!-- Action Execution Terminal Blueprint -->
                 <div class="terminal-action-stack">
                     <button type="button" class="btn-primary-fintech-lg" id="btn-generate-pdf-ui">
                         <span class="btn-shimmer-track-lg"></span>
                         <i data-lucide="crown"></i> Generate Premium PDF
                     </button>
                 </div>
-
             </main>
         </div>
-
     </div>
 
-    <!-- UI State Initialization Wire -->
+    <!-- =================================================== -->
+    <!-- VIEW 3: INVISIBLE HIGH-END PRINT INVOICE LAYOUT    -->
+    <!-- =================================================== -->
+    <div id="premium-print-document">
+        <div class="print-header">
+            <div class="print-company-details">
+                <h1 class="print-brand-title">KRISHNA CERAMICS</h1>
+                <p class="print-brand-subtitle">Premium Architectural Surfaces & Luxury Slabs</p>
+                <p>8-A National Highway, Morbi - 363642, Gujarat, India</p>
+                <p>Email: contact@krishnaceramics.com | Mobile: +91 99999 88888</p>
+            </div>
+            <div class="print-invoice-meta">
+                <div class="print-title-badge">TAX INVOICE</div>
+                <p><strong>Invoice No:</strong> <span id="p-inv-no"></span></p>
+                <p><strong>Date:</strong> <span id="p-inv-date"></span></p>
+                <p><strong>GSTIN:</strong> 24AAAAA0000A1Z5</p>
+            </div>
+        </div>
+
+        <div class="print-split-cards">
+            <div class="print-split-box">
+                <div class="print-box-title">BILLED TO (PARTY DETAILS)</div>
+                <p><strong id="p-party-name"></strong></p>
+                <p><strong>GSTIN:</strong> <span id="p-party-gstin"></span></p>
+                <p><strong>State:</strong> <span id="p-party-state"></span></p>
+            </div>
+            <div class="print-split-box">
+                <div class="print-box-title">LOGISTICS & TRANSPORT</div>
+                <p><strong>Transport Carrier:</strong> <span id="p-trans-name"></span></p>
+                <p><strong>Vehicle Number:</strong> <span id="p-trans-vehicle"></span></p>
+            </div>
+        </div>
+
+        <table class="print-item-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Description</th>
+                    <th>HSN</th>
+                    <th>Size</th>
+                    <th>Unit</th>
+                    <th class="text-right">Qty</th>
+                    <th class="text-right">Rate</th>
+                    <th class="text-right">Disc %</th>
+                    <th class="text-right">GST %</th>
+                    <th class="text-right">Taxable Amt</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body"></tbody>
+        </table>
+
+        <div class="print-summary-section">
+            <div class="print-bank-box">
+                <div class="print-box-title">BANK ACCOUNT DETAILS</div>
+                <p><strong>Bank Name:</strong> HDFC Bank Ltd</p>
+                <p><strong>Account Name:</strong> KRISHNA CERAMICS</p>
+                <p><strong>A/C Number:</strong> 50200088884444</p>
+                <p><strong>IFSC Code:</strong> HDFC0000123</p>
+                <p><strong>Branch:</strong> Morbi Highway Branch</p>
+            </div>
+            <div class="print-totals-box">
+                <div class="print-total-row"><span>Taxable Value:</span><strong id="p-val-taxable"></strong></div>
+                <div class="print-total-row" id="p-box-cgst"><span>CGST:</span><strong id="p-val-cgst"></strong></div>
+                <div class="print-total-row" id="p-box-sgst"><span>SGST:</span><strong id="p-val-sgst"></strong></div>
+                <div class="print-total-row" id="p-box-igst"><span>IGST:</span><strong id="p-val-igst"></strong></div>
+                <div class="print-total-row"><span>Round Off:</span><strong id="p-val-roundoff"></strong></div>
+                <div class="print-total-row print-grand-highlight"><span>Grand Total:</span><strong id="p-val-grandtotal"></strong></div>
+            </div>
+        </div>
+
+        <div class="print-words-row">
+            <strong>Amount in Words:</strong> <span id="p-val-words"></span>
+        </div>
+
+        <div class="print-footer-declaration">
+            <div class="print-terms">
+                <p><strong>Terms & Conditions:</strong></p>
+                <p>1. Goods once sold will not be taken back or exchanged.</p>
+                <p>2. Subject to Morbi jurisdiction only.</p>
+            </div>
+            <div class="print-signature-space">
+                <p>For, <strong>KRISHNA CERAMICS</strong></p>
+                <div class="signature-line-gap"></div>
+                <p><strong>Authorized Signatory</strong></p>
+                <p class="signatory-name">(Manpreet Kaur)</p>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
-</html>
+                        </html>
