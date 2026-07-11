@@ -511,5 +511,5 @@ if (btnGeneratePdfUi) {
 }
 
     if (appendRowBtn) { appendRowBtn.addEventListener('click', spawnProductRowSlot); }
-    loadDropdownMasters();
+    fetchMasterDataFromSheets();
 });
