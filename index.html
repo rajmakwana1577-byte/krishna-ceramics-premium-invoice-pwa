@@ -135,11 +135,11 @@
                     <div class="form-dual-row">
                         <div class="input-field-group">
                             <label>Invoice Number</label>
-                            <input type="text" value="KC/2026-27/001" placeholder="Auto-generated format">
+                            <input type="text" id="inv-number" value="KC/2026-27/001" placeholder="Auto-generated format">
                         </div>
                         <div class="input-field-group">
                             <label>Invoice Date</label>
-                            <input type="date" value="2026-07-11">
+                            <input type="date" id="inv-date" value="2026-07-11">
                         </div>
                     </div>
                 </div>
@@ -149,26 +149,32 @@
                     <div class="card-section-label">Party Selection</div>
                     <div class="input-field-group">
                         <label>Customer Name / Dealer</label>
-                        <input type="text" placeholder="Enter complete business title">
+                        <select class="select-field" id="party-select">
+                            <!-- Dynamic Load -->
+                        </select>
                     </div>
                     <div class="input-field-group margin-top-sm">
                         <label>GSTIN Identifier</label>
-                        <input type="text" placeholder="24AAAAA0000A1Z5" class="uppercase-text">
+                        <input type="text" id="party-gstin" placeholder="24AAAAA0000A1Z5" class="uppercase-text" readonly>
+                    </div>
+                    <div class="input-field-group margin-top-sm">
+                        <label>State of Supply</label>
+                        <input type="text" id="party-state" placeholder="State code details" readonly>
                     </div>
                 </div>
 
                 <!-- Transport Selection Card -->
                 <div class="fintech-interactive-card">
                     <div class="card-section-label">Transport & Logistics</div>
-                    <div class="form-dual-row">
-                        <div class="input-field-group">
-                            <label>Carrier Transport</label>
-                            <input type="text" placeholder="e.g. Shree Balaji Logistics">
-                        </div>
-                        <div class="input-field-group">
-                            <label>Vehicle Number</label>
-                            <input type="text" placeholder="e.g. GJ-03-XX-0000" class="uppercase-text">
-                        </div>
+                    <div class="input-field-group">
+                        <label>Carrier Transport</label>
+                        <select class="select-field" id="transport-select">
+                            <!-- Dynamic Load -->
+                        </select>
+                    </div>
+                    <div class="input-field-group margin-top-sm">
+                        <label>Vehicle Number</label>
+                        <input type="text" id="transport-vehicle" placeholder="e.g. GJ-03-XX-0000" class="uppercase-text">
                     </div>
                 </div>
 
@@ -183,67 +189,7 @@
 
                     <!-- Dynamic Container for Item Slots -->
                     <div class="item-slots-stack" id="product-rows-container">
-                        
-                        <!-- Initial Default Micro Row Component -->
-                        <div class="product-row-component">
-                            <div class="row-meta-header">
-                                <span class="row-count-badge">Item #1</span>
-                                <button type="button" class="btn-remove-row-slot"><i data-lucide="x"></i></button>
-                            </div>
-                            <div class="row-inputs-grid">
-                                <div class="input-field-group grid-span-full">
-                                    <label>Product Description</label>
-                                    <select class="select-field">
-                                        <option value="">Select Premium Surface Slabs</option>
-                                        <option selected>Statvario Imperial Polished GVT</option>
-                                        <option>Carara White Premium Quartz</option>
-                                        <option>Neo-Classic Matt Finish Porcelain</option>
-                                    </select>
-                                </div>
-                                <div class="input-field-group">
-                                    <label>HSN</label>
-                                    <input type="text" value="6907" placeholder="Code">
-                                </div>
-                                <div class="input-field-group">
-                                    <label>Size</label>
-                                    <input type="text" value="800x1600" placeholder="Dimensions">
-                                </div>
-                                <div class="input-field-group">
-                                    <label>Unit</label>
-                                    <select class="select-field">
-                                        <option selected>Boxes</option>
-                                        <option>Sq.Ft</option>
-                                        <option>Pcs</option>
-                                    </select>
-                                </div>
-                                <div class="input-field-group">
-                                    <label>Qty</label>
-                                    <input type="number" value="50" class="align-right-numeric">
-                                </div>
-                                <div class="input-field-group">
-                                    <label>Rate (₹)</label>
-                                    <input type="number" value="850.00" class="align-right-numeric">
-                                </div>
-                                <div class="input-field-group">
-                                    <label>Disc (%)</label>
-                                    <input type="number" value="5.00" class="align-right-numeric">
-                                </div>
-                                <div class="input-field-group">
-                                    <label>GST (%)</label>
-                                    <select class="select-field text-center-aligned">
-                                        <option>5%</option>
-                                        <option>12%</option>
-                                        <option selected>18%</option>
-                                        <option>28%</option>
-                                    </select>
-                                </div>
-                                <div class="input-field-group grid-span-double-right">
-                                    <label>Amount (₹)</label>
-                                    <div class="static-amount-output">₹40,375.00</div>
-                                </div>
-                            </div>
-                        </div>
-
+                        <!-- Instantiated dynamically via app.js calculations engine -->
                     </div>
                 </div>
 
@@ -253,23 +199,23 @@
                     <div class="summary-valuation-lines">
                         <div class="valuation-line">
                             <span class="line-label">Taxable Value</span>
-                            <span class="line-value">₹40,375.00</span>
+                            <span class="line-value" id="val-taxable">₹0.00</span>
                         </div>
-                        <div class="valuation-line tax-sub-line">
-                            <span class="line-label">CGST (9%)</span>
-                            <span class="line-value">₹3,633.75</span>
+                        <div class="valuation-line tax-sub-line" id="container-cgst">
+                            <span class="line-label">CGST</span>
+                            <span class="line-value" id="val-cgst">₹0.00</span>
                         </div>
-                        <div class="valuation-line tax-sub-line">
-                            <span class="line-label">SGST (9%)</span>
-                            <span class="line-value">₹3,633.75</span>
+                        <div class="valuation-line tax-sub-line" id="container-sgst">
+                            <span class="line-label">SGST</span>
+                            <span class="line-value" id="val-sgst">₹0.00</span>
                         </div>
-                        <div class="valuation-line tax-sub-line muted-line">
-                            <span class="line-label">IGST (0%)</span>
-                            <span class="line-value">₹0.00</span>
+                        <div class="valuation-line tax-sub-line" id="container-igst">
+                            <span class="line-label">IGST</span>
+                            <span class="line-value" id="val-igst">₹0.00</span>
                         </div>
                         <div class="valuation-line">
                             <span class="line-label">Round Off</span>
-                            <span class="line-value">-₹0.50</span>
+                            <span class="line-value" id="val-roundoff">₹0.00</span>
                         </div>
                     </div>
                 </div>
@@ -277,9 +223,9 @@
                 <!-- Grand Total Sticky/Highlight Card -->
                 <div class="grand-total-showcase-box">
                     <div class="total-meta-lbl">Grand Total Payable</div>
-                    <div class="total-monetary-val">₹47,642.00</div>
-                    <div class="amount-words-interpretation">
-                        INR Forty-Seven Thousand Six Hundred Forty-Two Only
+                    <div class="total-monetary-val" id="val-grandtotal">₹0.00</div>
+                    <div class="amount-words-interpretation" id="val-words">
+                        INR Zero Only
                     </div>
                 </div>
 
