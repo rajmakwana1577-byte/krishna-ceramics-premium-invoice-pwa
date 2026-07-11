@@ -3,27 +3,181 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 1. DATA MASTER DATASETS
     // ==========================================
-    const PARTY_MASTER = [
-        { id: "p1", name: "Royal Heritage Hotels Pvt Ltd", gstin: "24AAAAA1234A1Z0", state: "Gujarat", stateCode: 24 },
-        { id: "p2", name: "Ambika Marbles & Tiles Delhi", gstin: "07BBBBB5678B2Z1", state: "Delhi", stateCode: 7 },
-        { id: "p3", name: "Maruti Surface Distributors", gstin: "24CCCCC9876C1Z2", state: "Gujarat", stateCode: 24 },
-        { id: "p4", name: "Jaipur Design Studio", gstin: "08DDDDD4321D3Z4", state: "Rajasthan", stateCode: 8 }
-    ];
+    
 
-    const PRODUCT_MASTER = [
-        { id: "prd1", name: "Statvario Imperial Polished GVT", hsn: "6907", size: "800x1600", unit: "Boxes", gstRate: 18, price: 850.00 },
-        { id: "prd2", name: "Carara White Premium Quartz", hsn: "6802", size: "700x3000", unit: "Sq.Ft", gstRate: 18, price: 320.00 },
-        { id: "prd3", name: "Neo-Classic Matt Finish Porcelain", hsn: "6907", size: "600x1200", unit: "Boxes", gstRate: 18, price: 540.00 },
-        { id: "prd4", name: "Royal Gold Metallic Highlighter", hsn: "6907", size: "300x600", unit: "Pcs", gstRate: 12, price: 180.00 }
-    ];
+==========================================================
+// GOOGLE SHEETS LIVE DATA MASTERS CONNECTION CONFIGURATION (FINAL LIVE)
+// ==========================================================
+const GOOGLE_SHEET_ID = "1b6igO7kzK-WsP3p0-KFePSZ9CAalll15vFcgZkC6RpM";
 
-    const TRANSPORT_MASTER = [
-        { id: "t1", name: "Shree Balaji Logistics", defaultVehicle: "GJ-03-AT-4592" },
-        { id: "t2", name: "Khalsa Cargo Carriers", defaultVehicle: "PB-11-XX-8821" },
-        { id: "t3", name: "Marwar Surface Transport", defaultVehicle: "RJ-14-PC-0943" }
-    ];
+let PARTY_MASTER = [];
+let PRODUCT_MASTER = [];
+let TRANSPORT_MASTER = [];
 
-    const SOURCE_STATE_CODE = 24;
+/**
+ * Robust RFC 4180 Compliant CSV Parser State-Machine
+ * Handles embedded commas, double quotes, and multiline text inside cell records flawlessly.
+ */
+function parseCSVToJSON(csvText) {
+    const rawLines = [];
+    let currentRow = [];
+    let currentCell = '';
+    let inQuotes = false;
+
+    const cleanText = csvText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    for (let i = 0; i < cleanText.length; i++) {
+        const char = cleanText[i];
+        const nextChar = cleanText[i + 1];
+
+        if (inQuotes) {
+            if (char === '"') {
+                if (nextChar === '"') {
+                    currentCell += '"';
+                    i++; 
+                } else {
+                    inQuotes = false;
+                }
+            } else {
+                currentCell += char;
+            }
+        } else {
+            if (char === '"') {
+                inQuotes = true; 
+            } else if (char === ',') {
+                currentRow.push(currentCell.trim());
+                currentCell = '';
+            } else if (char === '\n') {
+                currentRow.push(currentCell.trim());
+                rawLines.push(currentRow);
+                currentRow = [];
+                currentCell = '';
+            } else {
+                currentCell += char;
+            }
+        }
+    }
+    
+    if (currentCell || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rawLines.push(currentRow);
+    }
+
+    if (rawLines.length === 0) return [];
+
+    let headerIndex = -1;
+    for (let i = 0; i < rawLines.length; i++) {
+        const rowString = rawLines[i].join(' ');
+        if (rowString.includes('Party ID') || rowString.includes('Product ID') || rowString.includes('Transport ID')) {
+            headerIndex = i;
+            break;
+        }
+    }
+
+    if (headerIndex === -1) return [];
+
+    const headers = rawLines[headerIndex];
+    const results = [];
+
+    for (let i = headerIndex + 1; i < rawLines.length; i++) {
+        const rowData = rawLines[i];
+        if (rowData.length === 0 || (rowData.length === 1 && rowData[0] === '')) continue;
+
+        const recordObject = {};
+        headers.forEach((header, colIndex) => {
+            recordObject[header] = rowData[colIndex] !== undefined ? rowData[colIndex] : '';
+        });
+        results.push(recordObject);
+    }
+
+    return results;
+}
+
+// Real-Time Google Sheet Parallel Fetching Engine (Promise.all)
+async function fetchMasterDataFromSheets() {
+    try {
+        console.log("Fintech Core: Initializing Parallel Connection to Google Sheet Ledger...");
+        
+        const partyUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Party_Master`;
+        const productUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Product_Master`;
+        const transportUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Transport_Master`;
+
+        // Parallel download execution
+        const [partyRes, productRes, transportRes] = await Promise.all([
+            fetch(partyUrl),
+            fetch(productUrl),
+            fetch(transportUrl)
+        ]);
+
+        // Extract text streams simultaneously
+        const [partyCsv, productCsv, transportCsv] = await Promise.all([
+            partyRes.text(),
+            productRes.text(),
+            transportRes.text()
+        ]);
+
+        // Process and map Party Master
+        const parsedParties = parseCSVToJSON(partyCsv);
+        PARTY_MASTER = parsedParties.map(p => {
+            let rawCode = 24; 
+            if (p['GSTIN'] && p['GSTIN'].length >= 2) {
+                rawCode = parseInt(p['GSTIN'].substring(0, 2)) || 24;
+            }
+            return {
+                id: p['Party ID'] || Math.random().toString(),
+                name: p['Party Name'] || 'Unknown Party',
+                gstin: p['GSTIN'] || '',
+                state: p['State'] || 'Gujarat',
+                stateCode: rawCode
+            };
+        }).filter(p => p.name !== 'Unknown Party');
+
+        // Process and map Product Master
+        const parsedProducts = parseCSVToJSON(productCsv);
+        PRODUCT_MASTER = parsedProducts.map(p => {
+            return {
+                id: p['Product ID'] || Math.random().toString(),
+                name: p['Product Name'] || 'Unknown Product',
+                hsn: p['HSN Code'] || '6907',
+                size: p['Size'] || 'Universal',
+                unit: 'Boxes', 
+                gstRate: 18,    // 100% FIXED GST AT 18% AS PER CONFIRMED RULES
+                price: 0.00     // Rate input remains 100% manual
+            };
+        }).filter(p => p.name !== 'Unknown Product');
+
+        // Process and map Transport Master
+        const parsedTransport = parseCSVToJSON(transportCsv);
+        TRANSPORT_MASTER = parsedTransport.map(t => {
+            return {
+                id: t['Transport ID'] || Math.random().toString(),
+                name: t['Transport Name'] || 'Unknown Carrier',
+                defaultVehicle: t['Vehicle No.'] || ''
+            };
+        }).filter(t => t.name !== 'Unknown Carrier');
+
+        console.log(`Fintech Core Sync Completed: ${PARTY_MASTER.length} Parties, ${PRODUCT_MASTER.length} Products, ${TRANSPORT_MASTER.length} Transporters loaded in parallel.`);
+        
+        // Refresh structural dropdown nodes safely
+        if (typeof loadDropdownMasters === 'function') {
+            loadDropdownMasters();
+        }
+    } catch (error) {
+        console.error("Critical Google Sheets Parallel Data Sync Failure:", error);
+    }
+}
+
+// Initialize sheet sync immediately when the viewport context is ready
+document.addEventListener('DOMContentLoaded', () => {
+    fetchMasterDataFromSheets();
+});
+
+const SOURCE_STATE_CODE = 24; // Base: Gujarat operations
+
+// End Marker
+
+
+
 
     // ==========================================
     // 2. DOM ELEMENT REGISTRY
