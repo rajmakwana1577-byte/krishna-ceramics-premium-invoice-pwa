@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "t3", name: "Marwar Surface Transport", defaultVehicle: "RJ-14-PC-0943" }
     ];
 
-    const SOURCE_STATE_CODE = 24; // Gujarat (Krishna Ceramics Base Operations)
+    const SOURCE_STATE_CODE = 24;
 
     // ==========================================
     // 2. DOM ELEMENT REGISTRY
@@ -54,9 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const containerCgst = document.getElementById('container-cgst');
     const containerSgst = document.getElementById('container-sgst');
     const containerIgst = document.getElementById('container-igst');
+    
+    const btnGeneratePdfUi = document.getElementById('btn-generate-pdf-ui');
 
     // ==========================================
-    // 3. NAVIGATION VIEW LOGIC
+    // 3. NAVIGATION & ICON SETUP
     // ==========================================
     function syncLucideIcons() {
         if (typeof lucide !== 'undefined') { lucide.createIcons(); }
@@ -79,11 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 4. DATA LOADER POPULATION ENGINE
-    // ==========================================
     function loadDropdownMasters() {
-        // Load Parties
         partySelect.innerHTML = '<option value="">Select Premium Business Client</option>';
         PARTY_MASTER.forEach(party => {
             const opt = document.createElement('option');
@@ -92,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             partySelect.appendChild(opt);
         });
 
-        // Load Transports
         transportSelect.innerHTML = '<option value="">Select Registered Transport Fleet</option>';
         TRANSPORT_MASTER.forEach(trans => {
             const opt = document.createElement('option');
@@ -102,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Dropdown change auto-fill listeners
     partySelect.addEventListener('change', (e) => {
         const selectedParty = PARTY_MASTER.find(p => p.id === e.target.value);
         if (selectedParty) {
@@ -127,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 5. INVOICE COMPUTATION CORE ENGINE
+    // 4. COMPUTATION ENGINE
     // ==========================================
     function initiateInvoiceDefaults() {
         productRowsContainer.innerHTML = '';
@@ -138,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         transportSelect.value = '';
         transportVehicle.value = '';
         
-        // Setup baseline default product row
         spawnProductRowSlot();
         calculateMasterInvoiceLedger();
     }
@@ -161,9 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="row-inputs-grid">
                 <div class="input-field-group grid-span-full">
                     <label>Product Description</label>
-                    <select class="select-field row-product-select">
-                        ${prdOptions}
-                    </select>
+                    <select class="select-field row-product-select">${prdOptions}</select>
                 </div>
                 <div class="input-field-group">
                     <label>HSN</label>
@@ -238,13 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         deleteBtn.addEventListener('click', () => {
             if (productRowsContainer.querySelectorAll('.product-row-component').length > 1) {
-                rowElement.style.opacity = '0';
-                rowElement.style.transform = 'scale(0.95) translateY(4px)';
-                setTimeout(() => {
-                    rowElement.remove();
-                    reindexRowBadges();
-                    calculateMasterInvoiceLedger();
-                }, 300);
+                rowElement.remove();
+                reindexRowBadges();
+                calculateMasterInvoiceLedger();
             }
         });
     }
@@ -300,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const mathematicallyRoundedTotal = Math.round(grossFinalCombinedTotal);
         const roundOffAdjustment = mathematicallyRoundedTotal - grossFinalCombinedTotal;
 
-        // Display updates
         valTaxable.textContent = `₹${cumulativeTaxableValue.toFixed(2)}`;
         valCgst.textContent = `₹${cumulativeCgst.toFixed(2)}`;
         valSgst.textContent = `₹${cumulativeSgst.toFixed(2)}`;
@@ -308,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
         valRoundoff.textContent = `${roundOffAdjustment >= 0 ? '+' : ''}₹${roundOffAdjustment.toFixed(2)}`;
         valGrandtotal.textContent = `₹${mathematicallyRoundedTotal.toFixed(2)}`;
 
-        // Context toggle visibility based on tax structures
         if (isInterstate) {
             containerIgst.style.display = 'flex';
             containerCgst.style.display = 'none';
@@ -322,9 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
         valWords.textContent = transformNumberToWords(mathematicallyRoundedTotal);
     }
 
-    // ==========================================
-    // 6. NUMERIC TO TEXT INTERPRETATION SUBROUTINE
-    // ==========================================
     function transformNumberToWords(num) {
         if (num === 0) return "INR Zero Only";
         const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
@@ -332,46 +316,98 @@ document.addEventListener('DOMContentLoaded', () => {
         
         function convertHundreds(n) {
             let str = "";
-            if (n > 99) {
-                str += a[Math.floor(n / 100)] + "Hundred ";
-                n %= 100;
-            }
-            if (n > 19) {
-                str += b[Math.floor(n / 10)] + " " + a[n % 10];
-            } else if (n > 0) {
-                str += a[n];
-            }
+            if (n > 99) { str += a[Math.floor(n / 100)] + "Hundred "; n %= 100; }
+            if (n > 19) { str += b[Math.floor(n / 10)] + " " + a[n % 10]; } 
+            else if (n > 0) { str += a[n]; }
             return str;
         }
 
-        let rem = num;
-        let wordResult = "";
-        
-        const crores = Math.floor(rem / 10000000);
-        rem %= 10000000;
+        let rem = num; let wordResult = "";
+        const crores = Math.floor(rem / 10000000); rem %= 10000000;
         if (crores > 0) wordResult += convertHundreds(crores) + "Crore ";
-        
-        const lakhs = Math.floor(rem / 100000);
-        rem %= 100000;
+        const lakhs = Math.floor(rem / 100000); rem %= 100000;
         if (lakhs > 0) wordResult += convertHundreds(lakhs) + "Lakh ";
-        
-        const thousands = Math.floor(rem / 1000);
-        rem %= 1000;
+        const thousands = Math.floor(rem / 1000); rem %= 1000;
         if (thousands > 0) wordResult += convertHundreds(thousands) + "Thousand ";
-        
         if (rem > 0) wordResult += convertHundreds(rem);
-        
         return "INR " + wordResult.trim() + " Only";
     }
 
     // ==========================================
-    // 7. GLOBAL INTERACTION HOOKS
+    // 5. PREMIUM PRINT ENGINE (PDF GENERATOR)
     // ==========================================
-    if (appendRowBtn) {
-        appendRowBtn.addEventListener('click', spawnProductRowSlot);
+    if (btnGeneratePdfUi) {
+        btnGeneratePdfUi.addEventListener('click', () => {
+            // Check verification mapping first
+            if(!partySelect.value) {
+                alert("Validation Exception: Please map a Customer Party before printing.");
+                return;
+            }
+
+            // Sync structural descriptors
+            document.getElementById('p-inv-no').textContent = document.getElementById('inv-number').value;
+            document.getElementById('p-inv-date').textContent = document.getElementById('inv-date').value;
+            
+            const currentParty = PARTY_MASTER.find(p => p.id === partySelect.value);
+            document.getElementById('p-party-name').textContent = currentParty.name;
+            document.getElementById('p-party-gstin').textContent = currentParty.gstin;
+            document.getElementById('p-party-state').textContent = partyState.value;
+
+            const currentTrans = TRANSPORT_MASTER.find(t => t.id === transportSelect.value);
+            document.getElementById('p-trans-name').textContent = currentTrans ? currentTrans.name : 'N/A';
+            document.getElementById('p-trans-vehicle').textContent = transportVehicle.value || 'N/A';
+
+            // Sync dynamic rows
+            const printTableBody = document.getElementById('print-table-body');
+            printTableBody.innerHTML = '';
+            
+            productRowsContainer.querySelectorAll('.product-row-component').forEach((row, i) => {
+                const prdSelect = row.querySelector('.row-product-select');
+                const prdObj = PRODUCT_MASTER.find(p => p.id === prdSelect.value);
+                if(!prdObj) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td><strong>${prdObj.name}</strong></td>
+                    <td>${row.querySelector('.row-hsn').value}</td>
+                    <td>${row.querySelector('.row-size').value}</td>
+                    <td>${row.querySelector('.row-unit').value}</td>
+                    <td class="text-right">${row.querySelector('.row-qty').value}</td>
+                    <td class="text-right">${parseFloat(row.querySelector('.row-rate').value).toFixed(2)}</td>
+                    <td class="text-right">${parseFloat(row.querySelector('.row-disc').value).toFixed(2)}%</td>
+                    <td class="text-right">${row.querySelector('.row-gst').value}</td>
+                    <td class="text-right">${row.querySelector('.row-calculated-amount').textContent}</td>
+                `;
+                printTableBody.appendChild(tr);
+            });
+
+            // Sync calculations block
+            document.getElementById('p-val-taxable').textContent = valTaxable.textContent;
+            document.getElementById('p-val-cgst').textContent = valCgst.textContent;
+            document.getElementById('p-val-sgst').textContent = valSgst.textContent;
+            document.getElementById('p-val-igst').textContent = valIgst.textContent;
+            document.getElementById('p-val-roundoff').textContent = valRoundoff.textContent;
+            document.getElementById('p-val-grandtotal').textContent = valGrandtotal.textContent;
+            document.getElementById('p-val-words').textContent = valWords.textContent;
+
+            // Handle interstate tax view flags
+            const clientStateCode = parseInt(partyState.dataset.stateCode) || 0;
+            if (clientStateCode > 0 && clientStateCode !== SOURCE_STATE_CODE) {
+                document.getElementById('p-box-igst').style.display = 'flex';
+                document.getElementById('p-box-cgst').style.display = 'none';
+                document.getElementById('p-box-sgst').style.display = 'none';
+            } else {
+                document.getElementById('p-box-igst').style.display = 'none';
+                document.getElementById('p-box-cgst').style.display = 'flex';
+                document.getElementById('p-box-sgst').style.display = 'flex';
+            }
+
+            // Trigger Print Engine
+            window.print();
+        });
     }
 
-    // Initialize global dropdown definitions
+    if (appendRowBtn) { appendRowBtn.addEventListener('click', spawnProductRowSlot); }
     loadDropdownMasters();
-    syncLucideIcons();
 });
