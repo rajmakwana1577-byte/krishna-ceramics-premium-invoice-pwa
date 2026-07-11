@@ -334,79 +334,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. PREMIUM PRINT ENGINE (PDF GENERATOR)
-    // ==========================================
-    if (btnGeneratePdfUi) {
-        btnGeneratePdfUi.addEventListener('click', () => {
-            // Check verification mapping first
-            if(!partySelect.value) {
-                alert("Validation Exception: Please map a Customer Party before printing.");
-                return;
-            }
+// 5. PREMIUM PRINT ENGINE (PDF GENERATOR)
+// ==========================================
+if (btnGeneratePdfUi) {
+    btnGeneratePdfUi.addEventListener('click', () => {
 
-            // Sync structural descriptors
-            document.getElementById('p-inv-no').textContent = document.getElementById('inv-number').value;
-            document.getElementById('p-inv-date').textContent = document.getElementById('inv-date').value;
-            
-            const currentParty = PARTY_MASTER.find(p => p.id === partySelect.value);
-            document.getElementById('p-party-name').textContent = currentParty.name;
-            document.getElementById('p-party-gstin').textContent = currentParty.gstin;
-            document.getElementById('p-party-state').textContent = partyState.value;
+        // Validate Customer Party
+        if (!partySelect.value) {
+            alert("Validation Exception: Please select a Customer Party before generating the PDF.");
+            return;
+        }
 
-            const currentTrans = TRANSPORT_MASTER.find(t => t.id === transportSelect.value);
-            document.getElementById('p-trans-name').textContent = currentTrans ? currentTrans.name : 'N/A';
-            document.getElementById('p-trans-vehicle').textContent = transportVehicle.value || 'N/A';
+        // Launch Premium PDF Engine
+        if (typeof window.generatePremiumInvoicePDF === 'function') {
+            window.generatePremiumInvoicePDF();
+        } else {
+            console.error("PDF Engine Module missing or failed to initialize.");
+            alert("PDF Engine could not be loaded.");
+        }
 
-            // Sync dynamic rows
-            const printTableBody = document.getElementById('print-table-body');
-            printTableBody.innerHTML = '';
-            
-            productRowsContainer.querySelectorAll('.product-row-component').forEach((row, i) => {
-                const prdSelect = row.querySelector('.row-product-select');
-                const prdObj = PRODUCT_MASTER.find(p => p.id === prdSelect.value);
-                if(!prdObj) return;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${i + 1}</td>
-                    <td><strong>${prdObj.name}</strong></td>
-                    <td>${row.querySelector('.row-hsn').value}</td>
-                    <td>${row.querySelector('.row-size').value}</td>
-                    <td>${row.querySelector('.row-unit').value}</td>
-                    <td class="text-right">${row.querySelector('.row-qty').value}</td>
-                    <td class="text-right">${parseFloat(row.querySelector('.row-rate').value).toFixed(2)}</td>
-                    <td class="text-right">${parseFloat(row.querySelector('.row-disc').value).toFixed(2)}%</td>
-                    <td class="text-right">${row.querySelector('.row-gst').value}</td>
-                    <td class="text-right">${row.querySelector('.row-calculated-amount').textContent}</td>
-                `;
-                printTableBody.appendChild(tr);
-            });
-
-            // Sync calculations block
-            document.getElementById('p-val-taxable').textContent = valTaxable.textContent;
-            document.getElementById('p-val-cgst').textContent = valCgst.textContent;
-            document.getElementById('p-val-sgst').textContent = valSgst.textContent;
-            document.getElementById('p-val-igst').textContent = valIgst.textContent;
-            document.getElementById('p-val-roundoff').textContent = valRoundoff.textContent;
-            document.getElementById('p-val-grandtotal').textContent = valGrandtotal.textContent;
-            document.getElementById('p-val-words').textContent = valWords.textContent;
-
-            // Handle interstate tax view flags
-            const clientStateCode = parseInt(partyState.dataset.stateCode) || 0;
-            if (clientStateCode > 0 && clientStateCode !== SOURCE_STATE_CODE) {
-                document.getElementById('p-box-igst').style.display = 'flex';
-                document.getElementById('p-box-cgst').style.display = 'none';
-                document.getElementById('p-box-sgst').style.display = 'none';
-            } else {
-                document.getElementById('p-box-igst').style.display = 'none';
-                document.getElementById('p-box-cgst').style.display = 'flex';
-                document.getElementById('p-box-sgst').style.display = 'flex';
-            }
-
-            // Trigger Print Engine
-            window.print();
-        });
-    }
+    });
+}
 
     if (appendRowBtn) { appendRowBtn.addEventListener('click', spawnProductRowSlot); }
     loadDropdownMasters();
