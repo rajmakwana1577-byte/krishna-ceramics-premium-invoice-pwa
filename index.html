@@ -27,93 +27,276 @@
 
     <div class="terminal-shell">
         
-        <!-- Premium Commercial Store Header -->
-        <header class="terminal-header">
-            <div class="store-brand-block">
-                <div class="prime-logo-container">
-                    <span class="logo-glyph">K</span>
-                </div>
-                <div class="brand-credentials">
-                    <h1>Krishna Ceramics</h1>
-                    <div class="gstin-badge">
-                        <span class="gstin-label">GSTIN</span>
-                        <span class="gstin-number">24AAAAA0000A1Z5</span>
+        <!-- =================================================== -->
+        <!-- VIEW 1: HOME SCREEN TERMINAL                        -->
+        <!-- =================================================== -->
+        <div id="view-home" class="terminal-view active">
+            <!-- Premium Commercial Store Header -->
+            <header class="terminal-header">
+                <div class="store-brand-block">
+                    <div class="prime-logo-container">
+                        <span class="logo-glyph">K</span>
                     </div>
-                </div>
-            </div>
-            
-            <div class="live-status-pill">
-                <span class="pulse-dot"></span>
-                <span class="status-lbl">Offline Ready</span>
-            </div>
-        </header>
-
-        <!-- Main Invoice Execution Workspace -->
-        <main class="terminal-workspace">
-            
-            <!-- Core Primary Action Terminal -->
-            <div class="main-action-zone">
-                <button type="button" class="action-megabutton" id="btn-initiate-invoice">
-                    <span class="button-shimmer-track"></span>
-                    <div class="action-inner-content">
-                        <div class="action-icon-frame">
-                            <i data-lucide="file-spreadsheet"></i>
-                        </div>
-                        <div class="action-text-frame">
-                            <span class="action-title">Create GST Invoice</span>
-                            <span class="action-meta">Initialize itemized billing sequence</span>
+                    <div class="brand-credentials">
+                        <h1>Krishna Ceramics</h1>
+                        <div class="gstin-badge">
+                            <span class="gstin-label">GSTIN</span>
+                            <span class="gstin-number">24AAAAA0000A1Z5</span>
                         </div>
                     </div>
-                    <div class="arrow-indicator-frame">
-                        <i data-lucide="arrow-up-right"></i>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Crisp Core Utility Grid -->
-            <div class="utility-feature-grid">
+                </div>
                 
-                <!-- Card 1: Mobile First -->
-                <div class="fintech-card">
-                    <div class="card-icon-hdr"><i data-lucide="smartphone"></i></div>
-                    <h3>Mobile First</h3>
-                    <p>Optimized touch layouts for swift viewport execution.</p>
+                <div class="live-status-pill">
+                    <span class="pulse-dot"></span>
+                    <span class="status-lbl">Offline Ready</span>
+                </div>
+            </header>
+
+            <!-- Main Invoice Execution Workspace -->
+            <main class="terminal-workspace">
+                <div class="main-action-zone">
+                    <button type="button" class="action-megabutton" id="btn-initiate-invoice">
+                        <span class="button-shimmer-track"></span>
+                        <div class="action-inner-content">
+                            <div class="action-icon-frame">
+                                <i data-lucide="file-spreadsheet"></i>
+                            </div>
+                            <div class="action-text-frame">
+                                <span class="action-title">Create GST Invoice</span>
+                                <span class="action-meta">Initialize itemized billing sequence</span>
+                            </div>
+                        </div>
+                        <div class="arrow-indicator-frame">
+                            <i data-lucide="arrow-up-right"></i>
+                        </div>
+                    </button>
                 </div>
 
-                <!-- Card 2: GST Ready -->
-                <div class="fintech-card">
-                    <div class="card-icon-hdr"><i data-lucide="percent"></i></div>
-                    <h3>GST Ready</h3>
-                    <p>Compliant with standard CGST, SGST, and IGST tiers.</p>
+                <!-- Crisp Core Utility Grid -->
+                <div class="utility-feature-grid">
+                    <div class="fintech-card">
+                        <div class="card-icon-hdr"><i data-lucide="smartphone"></i></div>
+                        <h3>Mobile First</h3>
+                        <p>Optimized touch layouts for swift viewport execution.</p>
+                    </div>
+
+                    <div class="fintech-card">
+                        <div class="card-icon-hdr"><i data-lucide="percent"></i></div>
+                        <h3>GST Ready</h3>
+                        <p>Compliant with standard CGST, SGST, and IGST tiers.</p>
+                    </div>
+
+                    <div class="fintech-card">
+                        <div class="card-icon-hdr"><i data-lucide="wifi-off"></i></div>
+                        <h3>Offline</h3>
+                        <p>Local state resilience during active network dropouts.</p>
+                    </div>
+
+                    <div class="fintech-card">
+                        <div class="card-icon-hdr"><i data-lucide="layers"></i></div>
+                        <h3>Installable PWA</h3>
+                        <p>Launches standalone directly from device workspace.</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Clean Institutional Footer -->
+            <footer class="terminal-footer">
+                <span class="copyright-str">&copy; 2026 Krishna Ceramics</span>
+                <div class="engine-version">v1.0.0-PRO</div>
+            </footer>
+        </div>
+
+        <!-- =================================================== -->
+        <!-- VIEW 2: INVOICE CONFIGURATION TERMINAL              -->
+        <!-- =================================================== -->
+        <div id="view-invoice-panel" class="terminal-view">
+            <!-- Invoice Header & Navigation Controls -->
+            <header class="terminal-sub-header">
+                <button type="button" class="btn-back-nav" id="btn-back-to-home">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <div class="sub-header-title">
+                    <h2>New GST Record</h2>
+                    <span class="invoice-meta-indicator">Configuration Terminal</span>
+                </div>
+                <div class="live-status-pill">
+                    <span class="pulse-dot"></span>
+                    <span class="status-lbl">Draft Mode</span>
+                </div>
+            </header>
+
+            <!-- Invoice Generation Form Payload -->
+            <main class="invoice-workspace-flow">
+                
+                <!-- Core Meta Card: Invoice Details -->
+                <div class="fintech-interactive-card">
+                    <div class="card-section-label">Core Registry</div>
+                    <div class="form-dual-row">
+                        <div class="input-field-group">
+                            <label>Invoice Number</label>
+                            <input type="text" value="KC/2026-27/001" placeholder="Auto-generated format">
+                        </div>
+                        <div class="input-field-group">
+                            <label>Invoice Date</label>
+                            <input type="date" value="2026-07-11">
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Card 3: Offline -->
-                <div class="fintech-card">
-                    <div class="card-icon-hdr"><i data-lucide="wifi-off"></i></div>
-                    <h3>Offline</h3>
-                    <p>Local state resilience during active network dropouts.</p>
+                <!-- Party Selection Card -->
+                <div class="fintech-interactive-card">
+                    <div class="card-section-label">Party Selection</div>
+                    <div class="input-field-group">
+                        <label>Customer Name / Dealer</label>
+                        <input type="text" placeholder="Enter complete business title">
+                    </div>
+                    <div class="input-field-group margin-top-sm">
+                        <label>GSTIN Identifier</label>
+                        <input type="text" placeholder="24AAAAA0000A1Z5" class="uppercase-text">
+                    </div>
                 </div>
 
-                <!-- Card 4: Installable PWA -->
-                <div class="fintech-card">
-                    <div class="card-icon-hdr"><i data-lucide="layers"></i></div>
-                    <h3>Installable PWA</h3>
-                    <p>Launches standalone directly from device workspace.</p>
+                <!-- Transport Selection Card -->
+                <div class="fintech-interactive-card">
+                    <div class="card-section-label">Transport & Logistics</div>
+                    <div class="form-dual-row">
+                        <div class="input-field-group">
+                            <label>Carrier Transport</label>
+                            <input type="text" placeholder="e.g. Shree Balaji Logistics">
+                        </div>
+                        <div class="input-field-group">
+                            <label>Vehicle Number</label>
+                            <input type="text" placeholder="e.g. GJ-03-XX-0000" class="uppercase-text">
+                        </div>
+                    </div>
                 </div>
 
-            </div>
+                <!-- Dynamic Line Items Section -->
+                <div class="items-ledger-container">
+                    <div class="ledger-header">
+                        <span class="ledger-title">Dynamic Product Registry</span>
+                        <button type="button" class="btn-add-item-row" id="btn-append-row">
+                            <i data-lucide="plus-circle"></i> Add Row
+                        </button>
+                    </div>
 
-        </main>
+                    <!-- Dynamic Container for Item Slots -->
+                    <div class="item-slots-stack" id="product-rows-container">
+                        
+                        <!-- Initial Default Micro Row Component -->
+                        <div class="product-row-component">
+                            <div class="row-meta-header">
+                                <span class="row-count-badge">Item #1</span>
+                                <button type="button" class="btn-remove-row-slot"><i data-lucide="x"></i></button>
+                            </div>
+                            <div class="row-inputs-grid">
+                                <div class="input-field-group grid-span-full">
+                                    <label>Product Description</label>
+                                    <select class="select-field">
+                                        <option value="">Select Premium Surface Slabs</option>
+                                        <option selected>Statvario Imperial Polished GVT</option>
+                                        <option>Carara White Premium Quartz</option>
+                                        <option>Neo-Classic Matt Finish Porcelain</option>
+                                    </select>
+                                </div>
+                                <div class="input-field-group">
+                                    <label>HSN</label>
+                                    <input type="text" value="6907" placeholder="Code">
+                                </div>
+                                <div class="input-field-group">
+                                    <label>Size</label>
+                                    <input type="text" value="800x1600" placeholder="Dimensions">
+                                </div>
+                                <div class="input-field-group">
+                                    <label>Unit</label>
+                                    <select class="select-field">
+                                        <option selected>Boxes</option>
+                                        <option>Sq.Ft</option>
+                                        <option>Pcs</option>
+                                    </select>
+                                </div>
+                                <div class="input-field-group">
+                                    <label>Qty</label>
+                                    <input type="number" value="50" class="align-right-numeric">
+                                </div>
+                                <div class="input-field-group">
+                                    <label>Rate (₹)</label>
+                                    <input type="number" value="850.00" class="align-right-numeric">
+                                </div>
+                                <div class="input-field-group">
+                                    <label>Disc (%)</label>
+                                    <input type="number" value="5.00" class="align-right-numeric">
+                                </div>
+                                <div class="input-field-group">
+                                    <label>GST (%)</label>
+                                    <select class="select-field text-center-aligned">
+                                        <option>5%</option>
+                                        <option>12%</option>
+                                        <option selected>18%</option>
+                                        <option>28%</option>
+                                    </select>
+                                </div>
+                                <div class="input-field-group grid-span-double-right">
+                                    <label>Amount (₹)</label>
+                                    <div class="static-amount-output">₹40,375.00</div>
+                                </div>
+                            </div>
+                        </div>
 
-        <!-- Clean Institutional Footer -->
-        <footer class="terminal-footer">
-            <span class="copyright-str">&copy; 2026 Krishna Ceramics</span>
-            <div class="engine-version">v1.0.0-PRO</div>
-        </footer>
+                    </div>
+                </div>
+
+                <!-- GST Summary Valuation Card -->
+                <div class="fintech-interactive-card luxury-valuation-card">
+                    <div class="card-section-label label-gold">GST Breakdown Architecture</div>
+                    <div class="summary-valuation-lines">
+                        <div class="valuation-line">
+                            <span class="line-label">Taxable Value</span>
+                            <span class="line-value">₹40,375.00</span>
+                        </div>
+                        <div class="valuation-line tax-sub-line">
+                            <span class="line-label">CGST (9%)</span>
+                            <span class="line-value">₹3,633.75</span>
+                        </div>
+                        <div class="valuation-line tax-sub-line">
+                            <span class="line-label">SGST (9%)</span>
+                            <span class="line-value">₹3,633.75</span>
+                        </div>
+                        <div class="valuation-line tax-sub-line muted-line">
+                            <span class="line-label">IGST (0%)</span>
+                            <span class="line-value">₹0.00</span>
+                        </div>
+                        <div class="valuation-line">
+                            <span class="line-label">Round Off</span>
+                            <span class="line-value">-₹0.50</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grand Total Sticky/Highlight Card -->
+                <div class="grand-total-showcase-box">
+                    <div class="total-meta-lbl">Grand Total Payable</div>
+                    <div class="total-monetary-val">₹47,642.00</div>
+                    <div class="amount-words-interpretation">
+                        INR Forty-Seven Thousand Six Hundred Forty-Two Only
+                    </div>
+                </div>
+
+                <!-- Action Execution Terminal Blueprint -->
+                <div class="terminal-action-stack">
+                    <button type="button" class="btn-primary-fintech-lg" id="btn-generate-pdf-ui">
+                        <span class="btn-shimmer-track-lg"></span>
+                        <i data-lucide="crown"></i> Generate Premium PDF
+                    </button>
+                </div>
+
+            </main>
+        </div>
 
     </div>
 
     <!-- UI State Initialization Wire -->
     <script src="app.js"></script>
 </body>
-</html> 
+</html>
