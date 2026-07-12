@@ -1,108 +1,35 @@
-/**
- * Krishna Ceramics Premium GST Invoice Generator PWA
- * CORE ENGINE - app.js (Production Ready)
- */
-
-// ==========================================================
-// 1. GLOBAL STATE & GOOGLE SHEETS REGISTRY CONFIGURATION
-// ==========================================================
-const GOOGLE_SHEET_ID = "1b6igO7kzK-WsP3p0-KFePSZ9CAalll15vFcgZkC6RpM"; 
-
-let PARTY_MASTER = [];
-let PRODUCT_MASTER = [];
-let TRANSPORT_MASTER = [];
-
-const SOURCE_STATE_CODE = 24; // Base Operations: Gujarat (Krishna Ceramics)
-
-/**
- * Robust RFC 4180 Compliant CSV Parser State-Machine
- * Flawlessly processes embedded commas, double quotes, and multiline text blocks.
- */
-function parseCSVToJSON(csvText) {
-    const rawLines = [];
-    let currentRow = [];
-    let currentCell = '';
-    let inQuotes = false;
-
-    const cleanText = csvText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
-    for (let i = 0; i < cleanText.length; i++) {
-        const char = cleanText[i];
-        const nextChar = cleanText[i + 1];
-
-        if (inQuotes) {
-            if (char === '"') {
-                if (nextChar === '"') {
-                    currentCell += '"';
-                    i++; 
-                } else {
-                    inQuotes = false;
-                }
-            } else {
-                currentCell += char;
-            }
-        } else {
-            if (char === '"') {
-                inQuotes = true; 
-            } else if (char === ',') {
-                currentRow.push(currentCell.trim());
-                currentCell = '';
-            } else if (char === '\n') {
-                currentRow.push(currentCell.trim());
-                rawLines.push(currentRow);
-                currentRow = [];
-                currentCell = '';
-            } else {
-                currentCell += char;
-            }
-        }
-    }
-    
-    if (currentCell || currentRow.length > 0) {
-        currentRow.push(currentCell.trim());
-        rawLines.push(currentRow);
-    }
-
-    if (rawLines.length === 0) return [];
-
-    let headerIndex = -1;
-    for (let i = 0; i < rawLines.length; i++) {
-        const rowString = rawLines[i].join(' ');
-        if (rowString.includes('Party ID') || rowString.includes('Product ID') || rowString.includes('Transport ID')) {
-            headerIndex = i;
-            break;
-        }
-    }
-
-    if (headerIndex === -1) return [];
-
-    const headers = rawLines[headerIndex];
-    const results = [];
-
-    for (let i = headerIndex + 1; i < rawLines.length; i++) {
-        const rowData = rawLines[i];
-        if (rowData.length === 0 || (rowData.length === 1 && rowData[0] === '')) continue;
-
-        const recordObject = {};
-        headers.forEach((header, colIndex) => {
-            recordObject[header] = rowData[colIndex] !== undefined ? rowData[colIndex] : '';
-        });
-        results.push(recordObject);
-    }
-
-    return results;
-}
-
-// ==========================================================
-// 2. CORE DOM APPLICATION ORCHESTRATION ENGINE
-// ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Capture View DOM Targets
+
+    // ==========================================
+    // 1. DATA MASTER DATASETS
+    // ==========================================
+    const PARTY_MASTER = [
+        { id: "p1", name: "Royal Heritage Hotels Pvt Ltd", gstin: "24AAAAA1234A1Z0", state: "Gujarat", stateCode: 24 },
+        { id: "p2", name: "Ambika Marbles & Tiles Delhi", gstin: "07BBBBB5678B2Z1", state: "Delhi", stateCode: 7 },
+        { id: "p3", name: "Maruti Surface Distributors", gstin: "24CCCCC9876C1Z2", state: "Gujarat", stateCode: 24 },
+        { id: "p4", name: "Jaipur Design Studio", gstin: "08DDDDD4321D3Z4", state: "Rajasthan", stateCode: 8 }
+    ];
+
+    const PRODUCT_MASTER = [
+        { id: "prd1", name: "Statvario Imperial Polished GVT", hsn: "6907", size: "800x1600", unit: "Boxes", gstRate: 18, price: 850.00 },
+        { id: "prd2", name: "Carara White Premium Quartz", hsn: "6802", size: "700x3000", unit: "Sq.Ft", gstRate: 18, price: 320.00 },
+        { id: "prd3", name: "Neo-Classic Matt Finish Porcelain", hsn: "6907", size: "600x1200", unit: "Boxes", gstRate: 18, price: 540.00 },
+        { id: "prd4", name: "Royal Gold Metallic Highlighter", hsn: "6907", size: "300x600", unit: "Pcs", gstRate: 12, price: 180.00 }
+    ];
+
+    const TRANSPORT_MASTER = [
+        { id: "t1", name: "Shree Balaji Logistics", defaultVehicle: "GJ-03-AT-4592" },
+        { id: "t2", name: "Khalsa Cargo Carriers", defaultVehicle: "PB-11-XX-8821" },
+        { id: "t3", name: "Marwar Surface Transport", defaultVehicle: "RJ-14-PC-0943" }
+    ];
+
+    const SOURCE_STATE_CODE = 24;
+
+    // ==========================================
+    // 2. DOM ELEMENT REGISTRY
+    // ==========================================
     const viewHome = document.getElementById('view-home');
     const viewInvoicePanel = document.getElementById('view-invoice-panel');
-    
-    // Capture Action Trigger Controls
     const initiateInvoiceBtn = document.getElementById('btn-initiate-invoice');
     const backToHomeBtn = document.getElementById('btn-back-to-home');
     
@@ -116,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const productRowsContainer = document.getElementById('product-rows-container');
     const appendRowBtn = document.getElementById('btn-append-row');
 
-    // Capture Valuation Output Fields
     const valTaxable = document.getElementById('val-taxable');
     const valCgst = document.getElementById('val-cgst');
     const valSgst = document.getElementById('val-sgst');
@@ -131,90 +57,30 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const btnGeneratePdfUi = document.getElementById('btn-generate-pdf-ui');
 
-    // Initialize Structural Component Icons via Lucide Engine
+    // ==========================================
+    // 3. NAVIGATION & ICON SETUP
+    // ==========================================
     function syncLucideIcons() {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
     }
 
-    // ==========================================
-    // 3. REMOTE GOOGLE SHEET INGESTION SUBMODULE
-    // ==========================================
-    async function fetchMasterDataFromSheets() {
-        try {
-            console.log("Fintech Core: Initializing Parallel Ingestion from Google Sheets...");
-            
-            const partyUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Party_Master`;
-            const productUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Product_Master`;
-            const transportUrl = `https://docs.google.com/spreadsheets/d/${GOOGLE_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Transport_Master`;
-
-            // Parallel execution via Promise.all() API
-            const [partyRes, productRes, transportRes] = await Promise.all([
-                fetch(partyUrl),
-                fetch(productUrl),
-                fetch(transportUrl)
-            ]);
-
-            const [partyCsv, productCsv, transportCsv] = await Promise.all([
-                partyRes.text(),
-                productRes.text(),
-                transportRes.text()
-            ]);
-
-            // Map Remotely Fetched Parties
-            const parsedParties = parseCSVToJSON(partyCsv);
-            PARTY_MASTER = parsedParties.map(p => {
-                let rawCode = 24; 
-                if (p['GSTIN'] && p['GSTIN'].length >= 2) {
-                    rawCode = parseInt(p['GSTIN'].substring(0, 2)) || 24;
-                }
-                return {
-                    id: p['Party ID'] || Math.random().toString(),
-                    name: p['Party Name'] || 'Unknown Party',
-                    gstin: p['GSTIN'] || '',
-                    state: p['State'] || 'Gujarat',
-                    stateCode: rawCode
-                };
-            }).filter(p => p.name !== 'Unknown Party');
-
-            // Map Remotely Fetched Products (Fixed GST 18%, Manual Price Setup)
-            const parsedProducts = parseCSVToJSON(productCsv);
-            PRODUCT_MASTER = parsedProducts.map(p => {
-                return {
-                    id: p['Product ID'] || Math.random().toString(),
-                    name: p['Product Name'] || 'Unknown Product',
-                    hsn: p['HSN Code'] || '6907',
-                    size: p['Size'] || 'Universal',
-                    unit: 'Boxes', 
-                    gstRate: 18,    
-                    price: 0.00     
-                };
-            }).filter(p => p.name !== 'Unknown Product');
-
-            // Map Remotely Fetched Transports
-            const parsedTransport = parseCSVToJSON(transportCsv);
-            TRANSPORT_MASTER = parsedTransport.map(t => {
-                return {
-                    id: t['Transport ID'] || Math.random().toString(),
-                    name: t['Transport Name'] || 'Unknown Carrier',
-                    defaultVehicle: t['Vehicle No.'] || ''
-                };
-            }).filter(t => t.name !== 'Unknown Carrier');
-
-            console.log(`Fintech Core Sync Completed: ${PARTY_MASTER.length} Parties, ${PRODUCT_MASTER.length} Products, ${TRANSPORT_MASTER.length} Transporters populated.`);
-            
-            // Invoke Dropdown Population immediately post remote execution completion
-            loadDropdownMasters();
-
-        } catch (error) {
-            console.error("Critical Google Sheets Parallel Data Sync Failure:", error);
-        }
+    if (initiateInvoiceBtn) {
+        initiateInvoiceBtn.addEventListener('click', () => {
+            viewHome.classList.remove('active');
+            viewInvoicePanel.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            initiateInvoiceDefaults();
+        });
     }
 
-    // ==========================================
-    // 4. DROPDOWN INJECTION LOGIC
-    // ==========================================
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', () => {
+            viewInvoicePanel.classList.remove('active');
+            viewHome.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
     function loadDropdownMasters() {
         partySelect.innerHTML = '<option value="">Select Premium Business Client</option>';
         PARTY_MASTER.forEach(party => {
@@ -233,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auto-fill listeners mapping logic
     partySelect.addEventListener('change', (e) => {
         const selectedParty = PARTY_MASTER.find(p => p.id === e.target.value);
         if (selectedParty) {
@@ -258,27 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 5. ROUTE VIEW TRANSITIONS
-    // ==========================================
-    if (initiateInvoiceBtn) {
-        initiateInvoiceBtn.addEventListener('click', () => {
-            viewHome.classList.remove('active');
-            viewInvoicePanel.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            initiateInvoiceDefaults();
-        });
-    }
-
-    if (backToHomeBtn) {
-        backToHomeBtn.addEventListener('click', () => {
-            viewInvoicePanel.classList.remove('active');
-            viewHome.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
-    // ==========================================
-    // 6. INVOICE COMPUTATION DYNAMICS ENGINE
+    // 4. COMPUTATION ENGINE
     // ==========================================
     function initiateInvoiceDefaults() {
         productRowsContainer.innerHTML = '';
@@ -368,12 +213,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 rowElement.querySelector('.row-unit').value = prd.unit;
                 rowElement.querySelector('.row-gst').value = `${prd.gstRate}%`;
                 rowElement.querySelector('.row-gst').dataset.rate = prd.gstRate;
+                rateInput.value = prd.price.toFixed(2);
             } else {
                 rowElement.querySelector('.row-hsn').value = '';
                 rowElement.querySelector('.row-size').value = '';
                 rowElement.querySelector('.row-unit').value = '';
                 rowElement.querySelector('.row-gst').value = '';
                 rowElement.querySelector('.row-gst').dataset.rate = 0;
+                rateInput.value = '0.00';
             }
             calculateSingleRowOutput(rowElement);
         });
@@ -462,9 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
         valWords.textContent = transformNumberToWords(mathematicallyRoundedTotal);
     }
 
-    // ==========================================
-    // 7. NUMERIC TO ALPHABETIC CONVERSION (WORDS)
-    // ==========================================
     function transformNumberToWords(num) {
         if (num === 0) return "INR Zero Only";
         const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
@@ -472,4 +316,98 @@ document.addEventListener('DOMContentLoaded', () => {
         
         function convertHundreds(n) {
             let str = "";
-            if (n > 99) { str += a[Math.floor(n / 100)] + "Hu
+            if (n > 99) { str += a[Math.floor(n / 100)] + "Hundred "; n %= 100; }
+            if (n > 19) { str += b[Math.floor(n / 10)] + " " + a[n % 10]; } 
+            else if (n > 0) { str += a[n]; }
+            return str;
+        }
+
+        let rem = num; let wordResult = "";
+        const crores = Math.floor(rem / 10000000); rem %= 10000000;
+        if (crores > 0) wordResult += convertHundreds(crores) + "Crore ";
+        const lakhs = Math.floor(rem / 100000); rem %= 100000;
+        if (lakhs > 0) wordResult += convertHundreds(lakhs) + "Lakh ";
+        const thousands = Math.floor(rem / 1000); rem %= 1000;
+        if (thousands > 0) wordResult += convertHundreds(thousands) + "Thousand ";
+        if (rem > 0) wordResult += convertHundreds(rem);
+        return "INR " + wordResult.trim() + " Only";
+    }
+
+    // ==========================================
+    // 5. PREMIUM PRINT ENGINE (PDF GENERATOR)
+    // ==========================================
+    if (btnGeneratePdfUi) {
+        btnGeneratePdfUi.addEventListener('click', () => {
+            // Check verification mapping first
+            if(!partySelect.value) {
+                alert("Validation Exception: Please map a Customer Party before printing.");
+                return;
+            }
+
+            // Sync structural descriptors
+            document.getElementById('p-inv-no').textContent = document.getElementById('inv-number').value;
+            document.getElementById('p-inv-date').textContent = document.getElementById('inv-date').value;
+            
+            const currentParty = PARTY_MASTER.find(p => p.id === partySelect.value);
+            document.getElementById('p-party-name').textContent = currentParty.name;
+            document.getElementById('p-party-gstin').textContent = currentParty.gstin;
+            document.getElementById('p-party-state').textContent = partyState.value;
+
+            const currentTrans = TRANSPORT_MASTER.find(t => t.id === transportSelect.value);
+            document.getElementById('p-trans-name').textContent = currentTrans ? currentTrans.name : 'N/A';
+            document.getElementById('p-trans-vehicle').textContent = transportVehicle.value || 'N/A';
+
+            // Sync dynamic rows
+            const printTableBody = document.getElementById('print-table-body');
+            printTableBody.innerHTML = '';
+            
+            productRowsContainer.querySelectorAll('.product-row-component').forEach((row, i) => {
+                const prdSelect = row.querySelector('.row-product-select');
+                const prdObj = PRODUCT_MASTER.find(p => p.id === prdSelect.value);
+                if(!prdObj) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td><strong>${prdObj.name}</strong></td>
+                    <td>${row.querySelector('.row-hsn').value}</td>
+                    <td>${row.querySelector('.row-size').value}</td>
+                    <td>${row.querySelector('.row-unit').value}</td>
+                    <td class="text-right">${row.querySelector('.row-qty').value}</td>
+                    <td class="text-right">${parseFloat(row.querySelector('.row-rate').value).toFixed(2)}</td>
+                    <td class="text-right">${parseFloat(row.querySelector('.row-disc').value).toFixed(2)}%</td>
+                    <td class="text-right">${row.querySelector('.row-gst').value}</td>
+                    <td class="text-right">${row.querySelector('.row-calculated-amount').textContent}</td>
+                `;
+                printTableBody.appendChild(tr);
+            });
+
+            // Sync calculations block
+            document.getElementById('p-val-taxable').textContent = valTaxable.textContent;
+            document.getElementById('p-val-cgst').textContent = valCgst.textContent;
+            document.getElementById('p-val-sgst').textContent = valSgst.textContent;
+            document.getElementById('p-val-igst').textContent = valIgst.textContent;
+            document.getElementById('p-val-roundoff').textContent = valRoundoff.textContent;
+            document.getElementById('p-val-grandtotal').textContent = valGrandtotal.textContent;
+            document.getElementById('p-val-words').textContent = valWords.textContent;
+
+            // Handle interstate tax view flags
+            const clientStateCode = parseInt(partyState.dataset.stateCode) || 0;
+            if (clientStateCode > 0 && clientStateCode !== SOURCE_STATE_CODE) {
+                document.getElementById('p-box-igst').style.display = 'flex';
+                document.getElementById('p-box-cgst').style.display = 'none';
+                document.getElementById('p-box-sgst').style.display = 'none';
+            } else {
+                document.getElementById('p-box-igst').style.display = 'none';
+                document.getElementById('p-box-cgst').style.display = 'flex';
+                document.getElementById('p-box-sgst').style.display = 'flex';
+            }
+
+            // Trigger Print Engine
+            window.print();
+        });
+    }
+
+    if (appendRowBtn) { appendRowBtn.addEventListener('click', spawnProductRowSlot); }
+    loadDropdownMasters();
+});
